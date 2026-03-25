@@ -1,75 +1,47 @@
+import java.io.*;
 import java.util.*;
-
-class Reservation {
-    String guestName;
-    String roomType;
-
-    Reservation(String guestName, String roomType) {
-        this.guestName = guestName;
-        this.roomType = roomType;
-    }
-}
 
 public class BookMyStayApp {
 
-    static Queue<Reservation> bookingQueue = new LinkedList<>();
-    static Map<String, Integer> inventory = new HashMap<>();
-    static Map<String, Integer> roomCounter = new HashMap<>();
+    public static void main(String[] args) {
 
-    public static synchronized void processBooking() {
-        if (bookingQueue.isEmpty()) {
-            return;
+        String fileName = "inventory.dat";
+
+        Map<String, Integer> inventory = new HashMap<>();
+
+        System.out.println("System Recovery");
+
+        try {
+            // Try to load existing data
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName));
+            inventory = (Map<String, Integer>) in.readObject();
+            in.close();
+
+        } catch (Exception e) {
+            // If file not found or error
+            System.out.println("No valid inventory data found. Starting fresh.\n");
+
+            inventory.put("Single", 5);
+            inventory.put("Double", 3);
+            inventory.put("Suite", 2);
         }
 
-        Reservation r = bookingQueue.poll();
-        String type = r.roomType;
-
-        if (inventory.get(type) > 0) {
-            roomCounter.put(type, roomCounter.get(type) + 1);
-            String roomId = type + "-" + roomCounter.get(type);
-
-            inventory.put(type, inventory.get(type) - 1);
-
-            System.out.println("Booking confirmed for Guest: " + r.guestName + ", Room ID: " + roomId);
-        }
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-
-        System.out.println("Concurrent Booking Simulation");
-
-        bookingQueue.add(new Reservation("Abhi", "Single"));
-        bookingQueue.add(new Reservation("Vanmathi", "Double"));
-        bookingQueue.add(new Reservation("Kural", "Suite"));
-        bookingQueue.add(new Reservation("Subha", "Single"));
-
-        inventory.put("Single", 5);
-        inventory.put("Double", 3);
-        inventory.put("Suite", 2);
-
-        roomCounter.put("Single", 0);
-        roomCounter.put("Double", 0);
-        roomCounter.put("Suite", 0);
-
-        Thread t1 = new Thread(() -> processBooking());
-        Thread t2 = new Thread(() -> processBooking());
-        Thread t3 = new Thread(() -> processBooking());
-        Thread t4 = new Thread(() -> processBooking());
-
-        t1.start();
-        t2.start();
-        t3.start();
-        t4.start();
-
-        t1.join();
-        t2.join();
-        t3.join();
-        t4.join();
-
-        System.out.println();
-        System.out.println("Remaining Inventory:");
+        // Display inventory
+        System.out.println("Current Inventory:");
         System.out.println("Single: " + inventory.get("Single"));
         System.out.println("Double: " + inventory.get("Double"));
         System.out.println("Suite: " + inventory.get("Suite"));
+
+        try {
+            // Save inventory
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
+            out.writeObject(inventory);
+            out.close();
+
+            System.out.println("Inventory saved successfully.");
+
+        } catch (IOException e) {
+            System.out.println("Error saving inventory.");
+        }
     }
 }
