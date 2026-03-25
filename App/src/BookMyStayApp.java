@@ -1,12 +1,12 @@
 import java.util.*;
 
-class Service {
-    String name;
-    double cost;
+class Reservation {
+    String guestName;
+    String roomType;
 
-    Service(String name, double cost) {
-        this.name = name;
-        this.cost = cost;
+    Reservation(String guestName, String roomType) {
+        this.guestName = guestName;
+        this.roomType = roomType;
     }
 }
 
@@ -14,30 +14,21 @@ public class BookMyStayApp {
 
     public static void main(String[] args) {
 
-        System.out.println("Add-On Service Selection");
+        System.out.println("Booking History and Reporting\n");
 
-        // Step 1: Reservation ID (from UC6)
-        String reservationId = "Single-01";
+        // Step 1: Booking history list
+        List<Reservation> bookingHistory = new ArrayList<>();
 
-        // Step 2: List of services
-        List<Service> services = new ArrayList<>();
+        // Step 2: Add confirmed bookings
+        bookingHistory.add(new Reservation("Abhi", "Single"));
+        bookingHistory.add(new Reservation("Subha", "Double"));
+        bookingHistory.add(new Reservation("Vanmathi", "Suite"));
 
-        services.add(new Service("Breakfast", 500.0));
-        services.add(new Service("Spa", 1000.0));
+        // Step 3: Display report
+        System.out.println("Booking History Report");
 
-        // Step 3: Map reservation → services
-        Map<String, List<Service>> addOnMap = new HashMap<>();
-        addOnMap.put(reservationId, services);
-
-        // Step 4: Calculate total cost
-        double totalCost = 0;
-
-        for (Service s : addOnMap.get(reservationId)) {
-            totalCost += s.cost;
+        for (Reservation r : bookingHistory) {
+            System.out.println("Guest: " + r.guestName + ", Room Type: " + r.roomType);
         }
-
-        // Step 5: Print output (EXACT FORMAT)
-        System.out.println("Reservation ID: " + reservationId);
-        System.out.println("Total Add-On Cost: " + totalCost);
     }
 }
