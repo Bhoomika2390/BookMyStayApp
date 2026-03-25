@@ -1,43 +1,41 @@
 import java.util.*;
 
-class Service {
-    String name;
-    double cost;
-
-    Service(String name, double cost) {
-        this.name = name;
-        this.cost = cost;
+class InvalidBookingException extends Exception {
+    InvalidBookingException(String message) {
+        super(message);
     }
 }
 
 public class BookMyStayApp {
 
+    public static void validate(String roomType) throws InvalidBookingException {
+
+        // Valid room types (case sensitive)
+        if (!(roomType.equals("Single") || roomType.equals("Double") || roomType.equals("Suite"))) {
+            throw new InvalidBookingException("Invalid room type selected.");
+        }
+    }
+
     public static void main(String[] args) {
 
-        System.out.println("Add-On Service Selection");
+        Scanner sc = new Scanner(System.in);
 
-        // Step 1: Reservation ID (from UC6)
-        String reservationId = "Single-01";
+        System.out.println("Booking Validation");
 
-        // Step 2: List of services
-        List<Service> services = new ArrayList<>();
+        System.out.print("Enter guest name: ");
+        String name = sc.nextLine();
 
-        services.add(new Service("Breakfast", 500.0));
-        services.add(new Service("Spa", 1000.0));
+        System.out.print("Enter room type (Single/Double/Suite): ");
+        String roomType = sc.nextLine();
 
-        // Step 3: Map reservation → services
-        Map<String, List<Service>> addOnMap = new HashMap<>();
-        addOnMap.put(reservationId, services);
+        try {
+            validate(roomType);
+            System.out.println("Booking successful for " + name);
 
-        // Step 4: Calculate total cost
-        double totalCost = 0;
-
-        for (Service s : addOnMap.get(reservationId)) {
-            totalCost += s.cost;
+        } catch (InvalidBookingException e) {
+            System.out.println("Booking failed: " + e.getMessage());
         }
 
-        // Step 5: Print output (EXACT FORMAT)
-        System.out.println("Reservation ID: " + reservationId);
-        System.out.println("Total Add-On Cost: " + totalCost);
+        sc.close();
     }
 }
