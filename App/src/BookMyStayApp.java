@@ -1,86 +1,47 @@
-/**
-
- * Book My Stay Application
- * Use Case 2: Basic Room Types & Static Availability
- *
- * Demonstrates abstraction, inheritance and simple availability.
- *
- * @author Bhoomika
- * @version 2.0
- */
-
-abstract class Room {
-
-    String type;
-    int beds;
-    int size; // size in square feet
-    double price;
-
-    public Room(String type, int beds, int size, double price) {
-        this.type = type;
-        this.beds = beds;
-        this.size = size;
-        this.price = price;
-    }
-
-    public void displayRoomDetails() {
-        System.out.println("Room Type: " + type);
-        System.out.println("Beds: " + beds);
-        System.out.println("Size: " + size + " sq ft");
-        System.out.println("Price per Night: $" + price);
-    }
-
-}
-
-class SingleRoom extends Room {
-
-    public SingleRoom() {
-        super("Single Room", 1, 200, 100);
-    }
-
-}
-
-class DoubleRoom extends Room {
-
-    public DoubleRoom() {
-        super("Double Room", 2, 350, 180);
-    }
-
-}
-
-class SuiteRoom extends Room {
-
-    public SuiteRoom() {
-        super("Suite Room", 3, 500, 300);
-    }
-
-}
+import java.io.*;
+import java.util.*;
 
 public class BookMyStayApp {
 
     public static void main(String[] args) {
 
-        System.out.println("Welcome to the Hotel Booking System");
-        System.out.println("Application Version: 2.0\n");
+        String fileName = "inventory.dat";
 
-        Room single = new SingleRoom();
-        Room doubleRoom = new DoubleRoom();
-        Room suite = new SuiteRoom();
+        Map<String, Integer> inventory = new HashMap<>();
 
-        int singleAvailability = 10;
-        int doubleAvailability = 5;
-        int suiteAvailability = 2;
+        System.out.println("System Recovery");
 
-        System.out.println("Room Details:\n");
+        try {
+            // Try to load existing data
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName));
+            inventory = (Map<String, Integer>) in.readObject();
+            in.close();
 
-        single.displayRoomDetails();
-        System.out.println("Available Rooms: " + singleAvailability + "\n");
+        } catch (Exception e) {
+            // If file not found or error
+            System.out.println("No valid inventory data found. Starting fresh.\n");
 
-        doubleRoom.displayRoomDetails();
-        System.out.println("Available Rooms: " + doubleAvailability + "\n");
+            inventory.put("Single", 5);
+            inventory.put("Double", 3);
+            inventory.put("Suite", 2);
+        }
 
-        suite.displayRoomDetails();
-        System.out.println("Available Rooms: " + suiteAvailability);
+        // Display inventory
+        System.out.println("Current Inventory:");
+        System.out.println("Single: " + inventory.get("Single"));
+        System.out.println("Double: " + inventory.get("Double"));
+        System.out.println("Suite: " + inventory.get("Suite"));
+
+        try {
+            // Save inventory
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
+            out.writeObject(inventory);
+            out.close();
+
+            System.out.println("Inventory saved successfully.");
+
+        } catch (IOException e) {
+            System.out.println("Error saving inventory.");
+        }
     }
-
 }
