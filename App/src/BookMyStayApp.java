@@ -9,15 +9,12 @@ class InvalidBookingException extends Exception {
 public class BookMyStayApp {
 
     public static void validate(String roomType) throws InvalidBookingException {
-
-        // Valid room types (case sensitive)
         if (!(roomType.equals("Single") || roomType.equals("Double") || roomType.equals("Suite"))) {
             throw new InvalidBookingException("Invalid room type selected.");
         }
     }
 
     public static void main(String[] args) {
-
         Scanner sc = new Scanner(System.in);
 
         System.out.println("Booking Validation");
@@ -31,7 +28,6 @@ public class BookMyStayApp {
         try {
             validate(roomType);
             System.out.println("Booking successful for " + name);
-
         } catch (InvalidBookingException e) {
             System.out.println("Booking failed: " + e.getMessage());
         }
